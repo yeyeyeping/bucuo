@@ -2,6 +2,7 @@ package dao
 
 import (
 	"bucuo/model"
+	"bucuo/util"
 	"log"
 	"os"
 	"time"
@@ -30,13 +31,7 @@ func initLogger() logger.Interface {
 	)
 }
 func initDB() {
-	cfg, err = ini.Load("./conf/app.ini")
-	if err != nil {
-		log.Fatalf("Fail to read file: %v", err)
-		os.Exit(1)
-	}
-	dsn := cfg.Section("mysql").Key("dsn").String()
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	DB, err = gorm.Open(mysql.Open(util.DbString), &gorm.Config{
 		Logger: initLogger(),
 	})
 	if err != nil {
@@ -45,7 +40,6 @@ func initDB() {
 	}
 
 	DB.AutoMigrate(&model.User{})
-
 }
 
 func initDBPool() {
