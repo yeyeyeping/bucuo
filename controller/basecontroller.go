@@ -16,3 +16,10 @@ func (r *BaseController) Success(ctx *gin.Context, data interface{}) {
 		Data: data,
 	})
 }
+func (r *BaseController) BadRequest(ctx *gin.Context, msg string, data interface{}) {
+	ctx.JSON(400, model.BaseResponse{
+		Code: -1,
+		Msg:  msg,
+		Data: data,
+	})
+}

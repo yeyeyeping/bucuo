@@ -3,6 +3,8 @@ module bucuo
 go 1.17
 
 require (
+	github.com/Valiben/gin_unit_test v0.0.0-20181205064931-674aee46d090
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/gin-gonic/gin v1.7.7
 	gopkg.in/ini.v1 v1.66.2
 	gorm.io/driver/mysql v1.2.3

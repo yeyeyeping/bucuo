@@ -38,8 +38,10 @@ func initDB() {
 		log.Fatalf("Fail to open database: %v", err)
 		os.Exit(1)
 	}
-
-	DB.AutoMigrate(&model.User{})
+	//检查有没有表，没有
+	if !DB.Migrator().HasTable(&model.User{}) {
+		DB.AutoMigrate(&model.User{})
+	}
 }
 
 func initDBPool() {
