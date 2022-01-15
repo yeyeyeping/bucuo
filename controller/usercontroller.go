@@ -25,7 +25,7 @@ func (uc UserController) Login(ctx *gin.Context) {
 	}
 	if ok := (service.UserService{}.FindByUserName(&user)); ok {
 		log.Printf("%#v", user)
-		if jwtstring, err := middleware.GenerateJwt(user.Id); err != nil {
+		if jwtstring, err := middleware.GenerateJwt(user.ID); err != nil {
 			uc.BadRequest(ctx, err.Error(), nil)
 		} else {
 			uc.Success(ctx, gin.H{

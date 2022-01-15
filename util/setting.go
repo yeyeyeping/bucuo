@@ -7,14 +7,15 @@ import (
 )
 
 var (
-	//connection string
+	// DbString connection string
 	DbString string
 
-	//app config
+	// LogLevel app config
+	IdPrefix string
 	LogLevel string
 	AppName  string
-
-	// jwt config
+	Port     string
+	// Issuer jwt config
 	Issuer    string
 	JwtKey    string
 	ExpiresAt string
@@ -37,6 +38,8 @@ func loadDB(cfg *ini.File) {
 func loadApp(cfg *ini.File) {
 	LogLevel = cfg.Section("app").Key("log_level").String()
 	AppName = cfg.Section("app").Key("app_name").String()
+	Port = cfg.Section("app").Key("port").String()
+	IdPrefix = cfg.Section("app").Key("id_prefix").String()
 }
 func loadJwt(cfg *ini.File) {
 	Issuer = cfg.Section("jwt").Key("issuer").String()

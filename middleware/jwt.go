@@ -18,13 +18,13 @@ type JwtClaim struct {
 var signkey = []byte(util.JwtKey)
 
 // GenerateJwt 生成jwt签名
-func GenerateJwt(userid int64) (string, error) {
+func GenerateJwt(userid uint) (string, error) {
 	expire, err := strconv.ParseInt(util.ExpiresAt, 10, 64)
 	if err != nil {
 		return "", err
 	}
 	claims := JwtClaim{
-		strconv.FormatInt(userid, 10),
+		strconv.FormatUint(uint64(userid), 10),
 		jwt.StandardClaims{
 			ExpiresAt: jwt.At(time.Now().Add(time.Duration(expire) * time.Minute)),
 			Issuer:    util.Issuer,
