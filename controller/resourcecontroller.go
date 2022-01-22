@@ -139,3 +139,42 @@ func (controller ResourceController) GetResouce(ctx *gin.Context) {
 	ctx.Writer.Write(bs)
 	ctx.Writer.Flush()
 }
+func (controller ResourceController) UploadOne(ctx *gin.Context) {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		controller.BadRequest(ctx, "文件不存在", nil)
+		ctx.Abort()
+		return
+	}
+	//判断上传资源的大小
+	if file.Size > 1024*1024*10 {
+		controller.BadRequest(ctx, "上传文件必须小于10MB", nil)
+		ctx.Abort()
+		return
+	}
+	//判断文件类型是否合法
+	ext := path.Ext(file.Filename)
+	if !utils.Contains(setting.Extension, ext) {
+		controller.BadRequest(ctx, "文件格式不允许", nil)
+		ctx.Abort()
+		return
+	}
+	userid := uint(parseUid(ctx))
+	//生成主键
+	u, _ := uuid.NewUUID()
+	uid := u.String()
+	//生成文件的磁盘路径
+	abpath := setting.ResourcePath + string(os.PathSeparator) + uid + ext
+	if s := iresourceservice.CreateOne(uid, abpath, userid); s != "" {
+		controller.InternalServerError(ctx, s, nil)
+		ctx.Abort()
+		return
+	}
+	if err := ctx.SaveUploadedFile(file, abpath); err != nil {
+		ctx.String(http.StatusBadRequest, fmt.Sprintf("upload err %s", err.Error()))
+		return
+	}
+	controller.Success(ctx, gin.H{
+		"resource": "/api/resource/" + uid,
+	})
+}

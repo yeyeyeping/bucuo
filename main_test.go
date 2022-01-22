@@ -326,7 +326,7 @@ func TestExpr(t *testing.T) {
 	fmt.Printf("%#v", p[0].Labels)
 }
 func TestJSon(t *testing.T) {
-	r := request.UpdateExprReq{}
+	r := request.DeleteCommonReq{}
 	bs, _ := json.Marshal(r)
 	fmt.Println(string(bs))
 }
@@ -338,4 +338,25 @@ func TestExprOne(t *testing.T) {
 func TestDelete(t *testing.T) {
 	e := table.ExprPost{Model: table.Model{ID: 2}}
 	dao.DB.Unscoped().Delete(&e)
+}
+func TestFindComonALl(t *testing.T) {
+	rs := &[]table.SkillPost{}
+	var ro interface{} = rs
+	dao.DB.
+		Table("skill_posts").
+		Limit(int(5)).
+		Offset(int((1 - 1) * 2)).
+		Preload("Resources").
+		Preload("Labels").
+		Find(rs)
+	fmt.Printf("%#v\n", (*rs)[0])
+	fmt.Printf("%#v\n", (*rs)[0].Labels)
+	fmt.Printf("%#v\n", (*rs)[0].Resources)
+	fmt.Println(ro.(*table.CommonPost))
+}
+func TestDeletePost(t *testing.T) {
+	//v := dao.DB.Exec("delete from "+"skill_posts"+" where id=? and publisher_id=?", "2", "1")
+	//fmt.Println(v.Error)
+	//fmt.Println(v.RowsAffected)
+	dao.DB.Table("local_posts").Where("id=? and publisher_id=?", 12, 1).Delete(table.LocalPost{})
 }

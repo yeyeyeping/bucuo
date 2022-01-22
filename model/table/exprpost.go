@@ -18,10 +18,9 @@ func (e ExprPost) BeforeDelete(db *gorm.DB) error {
 	v := ExprPost{Model: Model{ID: e.ID}}
 	db.
 		Table("expr_posts").
-		Preload("Labels").
 		First(&v)
 	if v.Labels != nil {
-		db.Table("labels").Unscoped().Delete(v.Labels)
+		db.Table("labels").Unscoped().Delete(v.Labels, "owner_id=?", v.ID)
 	}
 	return nil
 }

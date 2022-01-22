@@ -3,6 +3,7 @@ package controller
 import (
 	"bucuo/constant/errormsg"
 	"bucuo/model/response"
+	"bucuo/util/validator"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -29,4 +30,21 @@ func parseUid(ctx *gin.Context) uint64 {
 	suserid, _ := ctx.Get("UserId")
 	userid, _ := strconv.ParseUint(suserid.(string), 10, 64)
 	return userid
+}
+func (controller BaseController) ParseAndValidate(ctx *gin.Context, data interface{}) bool {
+	err := ctx.ShouldBind(data)
+	if err != nil {
+		if err != nil {
+			controller.CustomerError(ctx, errormsg.ValidateError, err.Error(), nil)
+			ctx.Abort()
+			return false
+		}
+	}
+	s, ok := validator.Validate(data)
+	if !ok {
+		controller.CustomerError(ctx, errormsg.ValidateError, s, nil)
+		ctx.Abort()
+		return false
+	}
+	return true
 }

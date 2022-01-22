@@ -44,19 +44,8 @@ func (controller ExprController) Publish(ctx *gin.Context) {
 	controller.Success(ctx, nil)
 }
 func (controller ExprController) FindALl(ctx *gin.Context) {
-	pageparam := request.ByPage{}
-	err := ctx.ShouldBindQuery(&pageparam)
-	if err != nil {
-		if err != nil {
-			controller.CustomerError(ctx, errormsg.ValidateError, err.Error(), nil)
-			ctx.Abort()
-			return
-		}
-	}
-	s, ok := validator.Validate(pageparam)
-	if !ok {
-		controller.CustomerError(ctx, errormsg.ValidateError, s, nil)
-		ctx.Abort()
+	pageparam := &request.ByPage{}
+	if ok := controller.ParseAndValidate(ctx, pageparam); !ok {
 		return
 	}
 	result, err := exprservice.FindAll(pageparam.Column, pageparam.PageSize, pageparam.PageNum)
@@ -107,22 +96,11 @@ func (controller ExprController) DeleteOne(ctx *gin.Context) {
 }
 func (controller ExprController) UpdateOne(ctx *gin.Context) {
 	post := &request.UpdateExprReq{}
-	err := ctx.ShouldBind(post)
-	if err != nil {
-		if err != nil {
-			controller.CustomerError(ctx, errormsg.ValidateError, err.Error(), nil)
-			ctx.Abort()
-			return
-		}
-	}
-	s, ok := validator.Validate(post)
-	if !ok {
-		controller.CustomerError(ctx, errormsg.ValidateError, s, nil)
-		ctx.Abort()
+	if ok := controller.ParseAndValidate(ctx, post); !ok {
 		return
 	}
 	id := parseUid(ctx)
-	err = exprservice.ExprExist(post.ID, uint(id))
+	err := exprservice.ExprExist(post.ID, uint(id))
 	if err != nil {
 		controller.CustomerError(ctx, errormsg.InternalServerError, err.Error(), nil)
 		ctx.Abort()

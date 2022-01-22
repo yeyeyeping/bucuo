@@ -36,3 +36,14 @@ func (r ResourceService) CreateResource(ID string, DiskFilePath string, Uploader
 func (r ResourceService) GetResouce(uuid string) (string, error) {
 	return resourcedao.GetResouce(uuid)
 }
+func (r ResourceService) CreateOne(id string, abpath string, uid uint) string {
+	rs := &table.Resource{
+		ID:           id,
+		DiskFilePath: abpath,
+		UploaderID:   uid,
+	}
+	if err := resourcedao.CreateOne(rs); err != nil {
+		return err.Error()
+	}
+	return ""
+}

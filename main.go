@@ -33,10 +33,12 @@ func main() {
 		routes.AuthResouceRoutesInit,
 		routes.AuthUserRoutesInit,
 		routes.AuthExprRoutesInit,
+		routes.AuthCommonRoutesInit,
 	)
 	UnAuthGroup("api", r,
 		routes.UserRoutesInit,
 		routes.ResouceRoutesInit,
 		routes.ExprRoutesInit,
+		routes.CommonRoutesInit,
 	)
 }

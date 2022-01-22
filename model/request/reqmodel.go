@@ -27,23 +27,40 @@ type ByPage struct {
 	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
 	Column   string `json:"column" validate:"oneof='课程考试' '考研保研' '竞赛考证' '新生守则' '其他经验' ''" label:"分类"`
 }
-
+type ByPageCommon struct {
+	PageSize uint   `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
+	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
+	Column   string `json:"column" label:"分类"`
+	Type     string `json:"type" validate:"required,table.Model='skill_posts' 'local_posts'" label:"分类"`
+}
 type IGetOwnerInfo interface {
 	GetOwnerType() string
 	GetOwnerId() uint
 	GetUserID() uint
 }
-type ResourceReq struct {
-	OwnerID   uint   `json:"ownerID" validate:"required,min=1"`
-	OwnerType string `json:"ownerType" validate:"required,min=1"`
-	UserID    uint   `validate:"-"`
-}
-
 type UpdateExprReq struct {
 	ID      uint   `json:"id" validate:"required,min=1" label:"编号"`
 	Title   string `json:"title" validate:"min=3,max=10" label:"标题"`
 	Content string `json:"content" validate:"min=10" label:"内容"`
 	Column  string `json:"column" validate:"oneof='课程考试' '考研保研' '竞赛考证' '新生守则' '其他经验'" label:"分类"`
+}
+type DeleteCommonReq struct {
+	Type   string `json:"type" validate:"required,oneof='skill_posts' 'local_posts'" label:"分类"`
+	PostID uint   `json:"postID" validate:"required,min=1"`
+}
+type CommonPostReq struct {
+	Title     string   `json:"title" validate:"required,max=10" label:"标题"`
+	Content   string   `json:"content" validate:"required,min=10" label:"内容"`
+	Column    string   `json:"column" validate:"required,max=20" label:"栏目"`
+	Type      string   `json:"type" validate:"required,oneof='skill_posts' 'local_posts'" label:"分类"`
+	Labels    []string `json:"labels" validate:"required,min=1,max=4,dive,max=10" label:"标签"`
+	PublishId uint     `json:"-" validate:"-"`
+	Resources []string `json:"resources"`
+}
+type ResourceReq struct {
+	OwnerID   uint   `json:"ownerID" validate:"required,min=1"`
+	OwnerType string `json:"ownerType" validate:"required,min=1"`
+	UserID    uint   `validate:"-"`
 }
 
 func (r ResourceReq) GetUserID() uint {

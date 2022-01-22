@@ -9,8 +9,8 @@ type Resource struct {
 	DiskFilePath string `gorm:"type:varchar(500);not null"`
 	UploaderID   uint   `gorm:"not null"`
 	Uploader     *User  `gorm:"foreignKey:UploaderID"`
-	OwnerType    string `gorm:"type:varchar(20);not null"`
-	OwnerID      uint   `gorm:"check:owner_id > 0"`
+	OwnerType    string `gorm:"type:varchar(20)"`
+	OwnerID      uint
 }
 
 //func (r *Resource) BeforeCreate(tx *gorm.DB) (err error) {

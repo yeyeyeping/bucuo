@@ -22,6 +22,9 @@ func (ExprDao) FindAll(column string, pagesize uint, pagenum uint) (postlist *[]
 			Limit(int(pagesize)).
 			Offset(int((pagenum-1)*pagesize)).
 			Preload("Labels").
+			Preload("Comments", func(db *gorm.DB) *gorm.DB {
+				return db.Select("ID")
+			}).
 			Preload("Collectors", func(db *gorm.DB) *gorm.DB {
 				return db.Select("ID")
 			}).

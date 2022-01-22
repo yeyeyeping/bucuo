@@ -37,3 +37,6 @@ func (r ResourceDao) GetResouce(uuid string) (string, error) {
 	}
 
 }
+func (r ResourceDao) CreateOne(resource *table.Resource) error {
+	return DB.Create(resource).Error
+}

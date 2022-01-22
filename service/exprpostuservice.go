@@ -15,10 +15,12 @@ func BuildSimpleExprPost(result *[]table.ExprPost) (rs *[]response.SimpleExprPos
 	rsp := make([]response.SimpleExprPost, len(*result))
 	for i, p := range *result {
 		ls := make([]response.SimpleLabel, len(*p.Labels))
-		for i, l := range *p.Labels {
-			ls[i] = response.SimpleLabel{
-				LabelID: l.ID,
-				Content: l.Content,
+		if p.Labels != nil {
+			for i, l := range *p.Labels {
+				ls[i] = response.SimpleLabel{
+					LabelID: l.ID,
+					Content: l.Content,
+				}
 			}
 		}
 		rsp[i] = response.SimpleExprPost{

@@ -71,3 +71,22 @@ type SimpleExprDetailResp struct {
 	CollectorNum   int            `json:"collectorNum"`
 	CommentNum     int            `json:"commentNum"`
 }
+
+type SimpleCommonPost struct {
+	ID      uint           `json:"id"`
+	Title   string         `json:"title"`
+	Content string         `json:"content"`
+	Column  string         `json:"column"`
+	Labels  *[]SimpleLabel `json:"labels"`
+	Cover   string         `json:"cover"`
+}
+
+type SimpleCommonPostDetailResp struct {
+	ID             uint           `json:"id"`
+	BucuoId        string         `json:"BucuoId"`
+	PublisherTime  Time           `json:"publisherTime"`
+	ProfilePicture string         `json:"profilePicture"`
+	Labels         *[]SimpleLabel `json:"labels"`
+	CommentNum     int            `json:"commentNum"`
+	Resources      *[]string      `json:"resources"`
+}
