@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="yeep" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="yeep">
+        <serverdata>
+          <mappings>
+            <mapping deploy="bucuo" local="$PROJECT_DIR$/build" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
