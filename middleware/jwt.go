@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"bucuo/model"
-	"bucuo/util"
+	"bucuo/constant/errormsg"
+	"bucuo/model/response"
+	"bucuo/util/setting"
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -15,19 +15,19 @@ type JwtClaim struct {
 	jwt.StandardClaims
 }
 
-var signkey = []byte(util.JwtKey)
+var signkey = []byte(setting.JwtKey)
 
 // GenerateJwt 生成jwt签名
-func GenerateJwt(userid uint) (string, error) {
-	expire, err := strconv.ParseInt(util.ExpiresAt, 10, 64)
+func GenerateJwt(userid string) (string, error) {
+	expire, err := strconv.ParseInt(setting.ExpiresAt, 10, 64)
 	if err != nil {
 		return "", err
 	}
 	claims := JwtClaim{
-		strconv.FormatUint(uint64(userid), 10),
+		userid,
 		jwt.StandardClaims{
 			ExpiresAt: jwt.At(time.Now().Add(time.Duration(expire) * time.Minute)),
-			Issuer:    util.Issuer,
+			Issuer:    setting.Issuer,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -51,24 +51,14 @@ func JwtMiddleWare() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		token := context.Request.Header.Get("Token")
 		if token == "" {
-			context.JSON(
-				http.StatusUnauthorized,
-				model.BaseResponse{
-					Code: http.StatusUnauthorized,
-				},
-			)
-			context.Abort()
+			context.AbortWithStatusJSON(errormsg.Unauthorized,
+				response.RespModel(errormsg.JwtError, "", nil))
 			return
 		}
 		userid, err := ParseJwt(token)
 		if err != nil {
-			context.JSON(
-				http.StatusBadRequest,
-				model.BaseResponse{
-					Code: http.StatusBadRequest,
-					Msg:  err.Error(),
-				},
-			)
+			context.AbortWithStatusJSON(errormsg.BadRequest,
+				response.RespModel(errormsg.JwtError, err.Error(), nil))
 			context.Abort()
 			return
 		}

@@ -3,7 +3,7 @@ package main
 import (
 	"bucuo/middleware"
 	"bucuo/routes"
-	"bucuo/util"
+	"bucuo/util/setting"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,15 +25,18 @@ func UnAuthGroup(path string, route *gin.Engine, rfunc ...RoutesFunc) {
 	}
 }
 func main() {
-	gin.ForceConsoleColor()
 	r := gin.Default()
+	defer r.Run(setting.Port)
 	r.Static("/static", "static")
-	defer r.Run(util.Port)
-	AuthGroup("api/auth", r, routes.AuthAdminRoutesInit)
-	UnAuthGroup("api", r, routes.UserRoutesInit)
-	//r := model.Reply{
-	//	Content: "12313113",
-	//}
-	//dao.DB.Create(&r)
-	//fmt.Printf("%#v", r)
+	AuthGroup("api/auth", r,
+		routes.AuthAdminRoutesInit,
+		routes.AuthResouceRoutesInit,
+		routes.AuthUserRoutesInit,
+		routes.AuthExprRoutesInit,
+	)
+	UnAuthGroup("api", r,
+		routes.UserRoutesInit,
+		routes.ResouceRoutesInit,
+		routes.ExprRoutesInit,
+	)
 }

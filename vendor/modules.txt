@@ -15,12 +15,14 @@ github.com/gin-gonic/gin/render
 ## explicit; go 1.13
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
+github.com/go-playground/locales/zh_Hans_CN
 # github.com/go-playground/universal-translator v0.18.0
 ## explicit; go 1.13
 github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.10.0
 ## explicit; go 1.13
 github.com/go-playground/validator/v10
+github.com/go-playground/validator/v10/translations/zh
 # github.com/go-sql-driver/mysql v1.6.0
 ## explicit; go 1.10
 github.com/go-sql-driver/mysql
@@ -30,6 +32,8 @@ github.com/golang/protobuf/proto
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
+# github.com/howeyc/fsnotify v0.9.0
+## explicit
 # github.com/jinzhu/inflection v1.0.0
 ## explicit
 github.com/jinzhu/inflection
@@ -42,6 +46,8 @@ github.com/json-iterator/go
 # github.com/leodido/go-urn v1.2.1
 ## explicit; go 1.13
 github.com/leodido/go-urn
+# github.com/mattn/go-colorable v0.1.12
+## explicit; go 1.13
 # github.com/mattn/go-isatty v0.0.14
 ## explicit; go 1.12
 github.com/mattn/go-isatty
@@ -51,12 +57,13 @@ github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.2
 ## explicit; go 1.12
 github.com/modern-go/reflect2
+# github.com/pilu/config v0.0.0-20131214182432-3eb99e6c0b9a
+## explicit
+# github.com/pilu/fresh v0.0.0-20190826141211-0fa698148017
+## explicit
 # github.com/ugorji/go/codec v1.2.6
 ## explicit; go 1.11
 github.com/ugorji/go/codec
-# github.com/wonderivan/logger v1.0.0
-## explicit
-github.com/wonderivan/logger
 # golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 ## explicit; go 1.17
 golang.org/x/crypto/sha3

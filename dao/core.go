@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"bucuo/model"
-	"bucuo/util"
+	"bucuo/model/table"
+	"bucuo/util/setting"
 	"gopkg.in/ini.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,7 +28,7 @@ func initLogger() logger.Interface {
 	)
 }
 func initDB() {
-	DB, err = gorm.Open(mysql.Open(util.DbString), &gorm.Config{
+	DB, err = gorm.Open(mysql.Open(setting.DbString), &gorm.Config{
 		Logger: initLogger(),
 	})
 	if err != nil {
@@ -36,19 +36,19 @@ func initDB() {
 		os.Exit(1)
 	}
 	//检查有没有表，没有
-	if !DB.Migrator().HasTable(&model.User{}) {
+	if !DB.Migrator().HasTable(&table.User{}) {
 		err := DB.Set("gorm:table_options", "ENGINE=InnoDB").
 			Set("gorm:table_options", "default charset=UTF8").
 			AutoMigrate(
-				&model.Comment{},
-				&model.ExprPost{},
-				&model.Label{},
-				&model.LocalPost{},
-				&model.LostRegisteration{},
-				&model.Reply{},
-				&model.Resource{},
-				&model.SkillPost{},
-				&model.User{},
+				&table.Comment{},
+				&table.ExprPost{},
+				&table.Label{},
+				&table.LocalPost{},
+				&table.LostRegisteration{},
+				&table.Reply{},
+				&table.Resource{},
+				&table.SkillPost{},
+				&table.User{},
 			)
 		log.Printf("\033[0;31;47m%#v\033[0m\n", err)
 	}
