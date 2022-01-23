@@ -367,3 +367,21 @@ func TestRows(t *testing.T) {
 	dao.DB.Raw("select count(*) from local_posts  where id=? and publisher_id=?", 16, 1).Row().Scan(&i)
 	fmt.Println(i)
 }
+func TestDeleteComment(t *testing.T) {
+	e := dao.DB.Table("comments").Where("id=? and user_id=?", 1, 1).Delete(table.Comment{}).RowsAffected
+	fmt.Printf("%#v", e)
+}
+func TestAddReply(t *testing.T) {
+	dao.CommentDao{}.AddComment(&table.Comment{
+		Content:   "12312312",
+		UserID:    1,
+		OwnerType: "local_posts",
+		OwnerID:   3,
+	})
+	err := dao.CommentDao{}.AddReply(1, &table.Reply{
+		CommentID: 1,
+		Content:   "133133",
+		ReplierID: 1,
+	})
+	fmt.Printf("%#v\n", err)
+}

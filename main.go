@@ -34,6 +34,7 @@ func main() {
 		routes.AuthUserRoutesInit,
 		routes.AuthExprRoutesInit,
 		routes.AuthCommonRoutesInit,
+		routes.AuthCommentInit,
 	)
 	UnAuthGroup("api", r,
 		routes.UserRoutesInit,

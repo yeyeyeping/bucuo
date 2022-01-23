@@ -31,7 +31,7 @@ type ByPageCommon struct {
 	PageSize uint   `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
 	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
 	Column   string `json:"column" label:"分类"`
-	Type     string `json:"type" validate:"required,table.Model='skill_posts' 'local_posts'" label:"分类"`
+	Type     string `json:"type" validate:"required,oneof='skill_posts' 'local_posts'" label:"分类"`
 }
 type IGetOwnerInfo interface {
 	GetOwnerType() string
@@ -66,6 +66,22 @@ type CommonPostUpdateReq struct {
 	Type      string   `json:"type" validate:"required,oneof='skill_posts' 'local_posts'" label:"分类"`
 	Labels    []string `json:"labels"`
 	Resources []string `json:"resources"`
+}
+type CommentReq struct {
+	Content string `json:"content" validate:"min=5,max=300"`
+	Type    string `json:"type" validate:"required,oneof='skill_posts' 'local_posts' 'expr_posts'" label:"分类"`
+	PostID  uint   `json:"ownerID" validate:"min=1"`
+}
+
+type ByPageComment struct {
+	PageSize uint   `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
+	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
+	Type     string `json:"type" validate:"required,oneof='skill_posts' 'local_posts' 'expr_posts'" label:"分类"`
+	PostID   uint   `json:"id" validate:"min=1"`
+}
+type AddReplyReq struct {
+	CommentID uint   `json:"commentID" validate:"required,min=1"`
+	Content   string `json:"content" validate:"required,min=10",max=150`
 }
 
 type ResourceReq struct {

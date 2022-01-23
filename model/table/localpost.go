@@ -33,9 +33,8 @@ func (e LocalPost) BeforeDelete(db *gorm.DB) error {
 		Table("local_posts").
 		Preload("Resources").
 		First(&v)
-	if v.Labels != nil {
-		db.Table("labels").Unscoped().Delete(v.Labels, "owner_id", v.ID)
-	}
+	db.Table("labels").Unscoped().Delete(v.Labels, "owner_id", v.ID)
+
 	if v.Resources != nil {
 		for _, resource := range *v.Resources {
 			os.Remove(resource.DiskFilePath)
