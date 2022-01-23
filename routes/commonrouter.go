@@ -15,4 +15,5 @@ func AuthCommonRoutesInit(router *gin.RouterGroup) {
 	router.GET("common", commoncontroller.FindALl)
 	router.POST("common", commoncontroller.Publish)
 	router.DELETE("common", commoncontroller.Detele)
+	router.PUT("common", commoncontroller.Update)
 }

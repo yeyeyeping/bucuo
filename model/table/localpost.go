@@ -6,7 +6,7 @@ import (
 )
 
 type LocalPost struct {
-	Title       string      `gorm:"type:varchar(12);not null"`
+	Title       string      `gorm:"type:varchar(40);not null"`
 	Content     string      `gorm:"type:varchar(3000);not null"`
 	Column      string      `gorm:"type:enum('美食','娱乐','生活购物');default:'娱乐'"`
 	Labels      *[]Label    `gorm:"polymorphic:Owner;constraint:OnDelete:CASCADE"`

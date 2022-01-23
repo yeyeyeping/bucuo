@@ -185,3 +185,45 @@ func (c CommonService) FindDetail(req *request.DeleteCommonReq) (*response.Simpl
 	}
 	return nil, "未知错误"
 }
+func (c CommonService) Update(req *request.CommonPostUpdateReq, uid uint) string {
+	es := commondao.Update(req.ID, req.Title, req.Content, req.Column, uid, req.Type)
+	if es != "" {
+		return es
+	}
+	//处理labels
+	if req.Labels != nil {
+		//清空labels
+		if s := commondao.ClearLabels(req.Type, req.ID); s != "" {
+			return s
+		}
+		//封装labels
+		ls := make([]table.Label, len(req.Labels))
+		if req.Labels != nil {
+			for i, label := range req.Labels {
+				ls[i] = table.Label{
+					Content:   label,
+					OwnerType: req.Type,
+					OwnerID:   req.ID,
+				}
+			}
+			if err := commondao.CreateLabels(req.Type, req.ID, &ls); err != nil {
+				return err.Error()
+			}
+		}
+	}
+	//处理resources
+	if req.Resources != nil {
+		if err := commondao.AddResource(req.Type, req.ID, &req.Resources); err != nil {
+			return err.Error()
+		}
+		//分装resource
+		rs := make([]table.Resource, len(req.Resources))
+		for i, resource := range req.Resources {
+			rs[i] = table.Resource{ID: resource}
+		}
+		if es := commondao.ReplaceResources(req.Type, req.ID, &rs); es != nil {
+			return es.Error()
+		}
+	}
+	return ""
+}

@@ -326,7 +326,7 @@ func TestExpr(t *testing.T) {
 	fmt.Printf("%#v", p[0].Labels)
 }
 func TestJSon(t *testing.T) {
-	r := request.DeleteCommonReq{}
+	r := request.CommonPostUpdateReq{}
 	bs, _ := json.Marshal(r)
 	fmt.Println(string(bs))
 }

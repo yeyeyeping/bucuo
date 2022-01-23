@@ -16,6 +16,25 @@ type CommonController struct {
 	BaseController
 }
 
+func ValidateUpdateParam(param *request.CommonPostUpdateReq) string {
+	if param.Title != "" && len(param.Title) > 10 {
+		return "帖子标题不能大于10个字符"
+	}
+	if param.Content != "" && (len(param.Content) < 3 || len(param.Content) >= 1500) {
+		return "帖子内容大于三个字小于1500字"
+	}
+	if param.Labels != nil && len(param.Labels) > 4 {
+		return "一个帖子最多添加4个标签"
+	}
+	if param.Labels != nil && len(param.Labels) <= 4 {
+		for _, label := range param.Labels {
+			if len(label) > 10 || len(label) < 2 {
+				return "标签最少不能少于两个字"
+			}
+		}
+	}
+	return ""
+}
 func (controller CommonController) Publish(ctx *gin.Context) {
 	post := &request.CommonPostReq{}
 	if ok := controller.ParseAndValidate(ctx, post); !ok {
@@ -95,6 +114,32 @@ func (controller CommonController) FindDetail(ctx *gin.Context) {
 	}
 	controller.Success(ctx, res)
 }
+func (controller CommonController) Update(ctx *gin.Context) {
+	post := &request.CommonPostUpdateReq{}
+	if ok := controller.ParseAndValidate(ctx, post); !ok {
+		ctx.Abort()
+		return
+	}
+	if s := ValidateUpdateParam(post); s != "" {
+		controller.CustomerError(ctx, errormsg.ValidateError, s, nil)
+		ctx.Abort()
+		return
+	}
+	tbname := ValidateColumn(post.Column, post.Type, false)
+	if !tbname {
+		controller.CustomerError(ctx, errormsg.ValidateError, "帖子栏目不属于该分类", nil)
+		ctx.Abort()
+		return
+	}
+	uid := parseUid(ctx)
+	if es := commonservice.Update(post, uint(uid)); es != "" {
+		controller.CustomerError(ctx, errormsg.ValidateError, es, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, nil)
+}
+
 func ValidateColumn(column string, tablename string, isnull bool) bool {
 	if isnull && column == "" {
 		return true

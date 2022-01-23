@@ -11,4 +11,5 @@ type ICommonService interface {
 	Exist(req *request.DeleteCommonReq, uid uint) bool
 	Delete(posttype string, id uint, uid uint) string
 	FindDetail(req *request.DeleteCommonReq) (*response.SimpleCommonPostDetailResp, string)
+	Update(req *request.CommonPostUpdateReq, uid uint) string
 }
