@@ -360,3 +360,10 @@ func TestDeletePost(t *testing.T) {
 	//fmt.Println(v.RowsAffected)
 	dao.DB.Table("local_posts").Where("id=? and publisher_id=?", 12, 1).Delete(table.LocalPost{})
 }
+func TestRows(t *testing.T) {
+	i := 0
+	//sqldb, _ := dao.DB.DB()
+	//sqldb.QueryRow("select count(*) from local_posts  where id=? and publisher_id=? ", 16, 1).Scan(&i)
+	dao.DB.Raw("select count(*) from local_posts  where id=? and publisher_id=?", 16, 1).Row().Scan(&i)
+	fmt.Println(i)
+}

@@ -134,14 +134,15 @@ func (c CommonService) BuildSimpleLocaLPostDetail(post *table.LocalPost) *respon
 
 }
 func (c CommonService) PushPost(req *request.CommonPostReq) string {
-
 	err, id := commondao.CreatePost(req.Type, req.Title, req.Content, req.Column, req.PublishId, &req.Labels)
 	if err != nil {
 		return err.Error()
 	}
-	err = commondao.AddResource(req.Type, id, &req.Resources)
-	if err != nil {
-		return err.Error()
+	if req.Resources != nil {
+		err = commondao.AddResource(req.Type, id, &req.Resources)
+		if err != nil {
+			return err.Error()
+		}
 	}
 	return ""
 }
@@ -193,9 +194,6 @@ func (c CommonService) Update(req *request.CommonPostUpdateReq, uid uint) string
 	//处理labels
 	if req.Labels != nil {
 		//清空labels
-		if s := commondao.ClearLabels(req.Type, req.ID); s != "" {
-			return s
-		}
 		//封装labels
 		ls := make([]table.Label, len(req.Labels))
 		if req.Labels != nil {

@@ -155,11 +155,14 @@ func (d CommonDao) FindOneLocalPost(id uint) (*table.LocalPost, error) {
 	return rs, err
 }
 func (d CommonDao) Update(id uint, title string, content string, column string, publisher_id uint, tp string) string {
+	rows := DB.Raw("select count(*) from "+tp+"  where id=? and publisher_id=?", id, publisher_id).Row()
+	i := 0
+	rows.Scan(&i)
+	if i != 1 {
+		return "未找到记录"
+	}
 	tmpdb := DB.Exec("update `"+tp+"` "+"set title=?,content=?,`column`=? where id=? and publisher_id=?",
 		title, content, column, id, publisher_id)
-	if tmpdb.RowsAffected == 0 {
-		return "找不到记录"
-	}
 	if tmpdb.Error != nil {
 		return tmpdb.Error.Error()
 	}
@@ -167,9 +170,6 @@ func (d CommonDao) Update(id uint, title string, content string, column string, 
 }
 func (d CommonDao) ClearLabels(ownertype string, ownerid uint) string {
 	tmpdb := DB.Exec("delete from labels where owner_type=? and owner_id=?", ownertype, ownerid)
-	if tmpdb.RowsAffected == 0 {
-		return "找不到记录"
-	}
 	if tmpdb.Error != nil {
 		return tmpdb.Error.Error()
 	}
@@ -177,7 +177,7 @@ func (d CommonDao) ClearLabels(ownertype string, ownerid uint) string {
 }
 func (d CommonDao) CreateLabels(ownertype string, ownerid uint, label *[]table.Label) error {
 	if ownertype == "local_posts" {
-		return DB.Model(&table.LocalPost{Model: table.Model{ID: ownerid}}).Association("Labels").Append(label)
+		return DB.Model(&table.LocalPost{Model: table.Model{ID: ownerid}}).Association("Labels").Replace(label)
 	}
 	if ownertype == "skill_posts" {
 		return DB.Model(&table.SkillPost{Model: table.Model{ID: ownerid}}).Association("Labels").Append(label)
