@@ -108,5 +108,30 @@ func (controller CommentController) LikeReply(ctx *gin.Context) {
 	}
 	controller.Success(ctx, nil)
 }
-func (controller CommentController) GetByPage(ctx *gin.Context) {
+func (controller CommentController) GetCommentByPage(ctx *gin.Context) {
+	c := &request.ByPageComment{}
+	if ok := controller.ParseAndValidate(ctx, c); !ok {
+		return
+	}
+	es, rs := commentservice.GetComments(c)
+	if es != "" {
+		controller.InternalServerError(ctx, es, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, rs)
+}
+func (controller CommentController) GetReply(ctx *gin.Context) {
+	p := &request.ByPageReply{}
+	if ok := controller.ParseAndValidate(ctx, p); !ok {
+		return
+	}
+	es, re := commentservice.GetReplies(p)
+	if es != "" {
+		controller.InternalServerError(ctx, es, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, re)
+
 }

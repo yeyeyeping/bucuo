@@ -26,7 +26,10 @@ func (e SkillPost) BeforeDelete(db *gorm.DB) error {
 	db.Table("labels").Unscoped().Delete(v.Labels, "owner_id=?", v.ID)
 	if v.Resources != nil {
 		for _, i2 := range *v.Resources {
-			os.Remove(i2.DiskFilePath)
+			err := os.Remove(i2.DiskFilePath)
+			if err != nil {
+				return err
+			}
 		}
 		db.Table("resources").Unscoped().Delete(v.Resources, "owner_id=?", v.ID)
 	}

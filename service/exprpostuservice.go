@@ -50,6 +50,11 @@ func BuildSimpleDetail(post *table.ExprPost) *response.SimpleExprDetailResp {
 	if post.Collectors != nil {
 		num2 = len(*post.Collectors)
 	}
+	like := false
+	err := exprdao.ExistOne(post.ID, post.PublisherID)
+	if err == nil {
+		like = true
+	}
 	r := response.SimpleExprDetailResp{
 		ID:             post.ID,
 		BucuoId:        post.Publisher.BucuoID,
@@ -58,10 +63,10 @@ func BuildSimpleDetail(post *table.ExprPost) *response.SimpleExprDetailResp {
 		Labels:         &ls,
 		CollectorNum:   num2,
 		CommentNum:     num1,
+		Like:           like,
 	}
 	return &r
 }
-
 func (e ExprPostService) DeleteOne(id uint) error {
 	return exprdao.DeleteOne(id)
 }
@@ -98,7 +103,6 @@ func (e ExprPostService) FindDetails(id uint) (error, *response.SimpleExprDetail
 func (e ExprPostService) ExprExist(exprid uint, uid uint) error {
 	return exprdao.ExistOne(exprid, uid)
 }
-
 func (e ExprPostService) UpdateOne(req *request.UpdateExprReq) error {
 	return exprdao.UpdateOne(req)
 }

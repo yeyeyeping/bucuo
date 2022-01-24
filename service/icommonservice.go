@@ -12,4 +12,5 @@ type ICommonService interface {
 	Delete(posttype string, id uint, uid uint) string
 	FindDetail(req *request.DeleteCommonReq) (*response.SimpleCommonPostDetailResp, string)
 	Update(req *request.CommonPostUpdateReq, uid uint) string
+	FindUserSkillPost(uid uint) (*[]response.SimpleCommonPost, string)
 }

@@ -9,6 +9,7 @@ var commoncontroller = controller.CommonController{}
 
 func CommonRoutesInit(router *gin.RouterGroup) {
 	router.GET("common/one", commoncontroller.FindDetail)
+	router.GET("common/recommend", commoncontroller.Recommend)
 }
 
 func AuthCommonRoutesInit(router *gin.RouterGroup) {

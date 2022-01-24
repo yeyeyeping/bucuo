@@ -83,3 +83,13 @@ func (u UserDao) DeleteHomeLike(like uint, liked uint) string {
 		Delete(&table.User{Model: table.Model{ID: liked}})
 	return ""
 }
+func (u UserDao) LikeExist(uid uint, otherid uint) bool {
+	i := 0
+	DB.Raw("select count(*) from home_page_like_liked where user_id=? and like_home_page_user_id=?", uid, otherid).Scan(&i)
+	return i == 1
+}
+func (u UserDao) UserExist(uid uint) bool {
+	i := 0
+	DB.Raw("select count(*) from users where id=?", uid).Scan(&i)
+	return i == 1
+}

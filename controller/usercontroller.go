@@ -193,3 +193,81 @@ func (controller UserController) UnLike(ctx *gin.Context) {
 	}
 	controller.Success(ctx, nil)
 }
+func (controller UserController) GetOther(ctx *gin.Context) {
+	sid := ctx.Param("id")
+	id, err := strconv.ParseUint(sid, 10, 64)
+	if err != nil {
+		controller.CustomerError(ctx, errormsg.ValidateError, "id错误", nil)
+		ctx.Abort()
+		return
+	}
+	uid := uint(parseUid(ctx))
+	rs := userservice.GetOtherUserById(uid, uint(id))
+	if rs == "" {
+		controller.InternalServerError(ctx, "用户不存在", nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, rs)
+}
+func (controller UserController) GetUserOne(ctx *gin.Context) {
+	sid := ctx.Query("id")
+	var uid uint
+	if sid == "" {
+		uid = uint(parseUid(ctx))
+	} else {
+		id, err := strconv.ParseUint(sid, 10, 64)
+		if err != nil {
+			controller.CustomerError(ctx, errormsg.ValidateError, "id错误", nil)
+			ctx.Abort()
+			return
+		}
+		uid = uint(id)
+	}
+	expr, err := userservice.GetUserExpr(uid)
+	if err != nil {
+		controller.InternalServerError(ctx, err.Error(), nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, expr)
+}
+func (controller UserController) GetDetail(ctx *gin.Context) {
+	sid := ctx.Query("id")
+	var uid uint
+	if sid == "" {
+		uid = uint(parseUid(ctx))
+	} else {
+		id, err := strconv.ParseUint(sid, 10, 64)
+		if err != nil {
+			controller.CustomerError(ctx, errormsg.ValidateError, "id错误", nil)
+			ctx.Abort()
+			return
+		}
+		uid = uint(id)
+	}
+	r := userservice.GetDetail(uid)
+	controller.Success(ctx, r)
+}
+func (controller UserController) FindUser(ctx *gin.Context) {
+	sid := ctx.Query("id")
+	var uid uint
+	if sid == "" {
+		uid = uint(parseUid(ctx))
+	} else {
+		id, err := strconv.ParseUint(sid, 10, 64)
+		if err != nil {
+			controller.CustomerError(ctx, errormsg.ValidateError, "id错误", nil)
+			ctx.Abort()
+			return
+		}
+		uid = uint(id)
+	}
+	rs, s := commonservice.FindUserSkillPost(uid)
+	if s != "" {
+		controller.InternalServerError(ctx, s, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, rs)
+}

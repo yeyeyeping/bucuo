@@ -1,8 +1,10 @@
 package dao
 
 import (
+	"bucuo/model/response"
 	"bucuo/model/table"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type CommonDao struct {
@@ -64,6 +66,7 @@ func (d CommonDao) FindAllSkillPost(posttype string, column string, pagesize uin
 		er = DB.
 			Table(posttype).
 			Where("`column`=?", column).
+			Order("id").
 			Limit(int(pagesize)).
 			Offset(int((pagenum - 1) * pagesize)).
 			Preload("Resources").
@@ -72,8 +75,9 @@ func (d CommonDao) FindAllSkillPost(posttype string, column string, pagesize uin
 	} else {
 		er = DB.
 			Table(posttype).
-			Limit(int(pagesize)).
+			Order("id").
 			Offset(int((pagenum - 1) * pagesize)).
+			Limit(int(pagesize)).
 			Preload("Resources").
 			Preload("Labels").
 			Find(rs).Error
@@ -87,16 +91,18 @@ func (d CommonDao) FindAllLocalPost(posttype string, column string, pagesize uin
 		er = DB.
 			Table(posttype).
 			Where("`column`=?", column).
-			Limit(int(pagesize)).
+			Order("").
 			Offset(int((pagenum - 1) * pagesize)).
+			Limit(int(pagesize)).
 			Preload("Resources").
 			Preload("Labels").
 			Find(rs).Error
 	} else {
 		er = DB.
 			Table(posttype).
-			Limit(int(pagesize)).
+			Order("id").
 			Offset(int((pagenum - 1) * pagesize)).
+			Limit(int(pagesize)).
 			Preload("Resources").
 			Preload("Labels").
 			Find(rs).Error
@@ -193,4 +199,99 @@ func (d CommonDao) ReplaceResources(ownertype string, ownerid uint, resource *[]
 	}
 	return gorm.ErrUnsupportedRelation
 
+}
+func (c CommonDao) FindUser(uid uint) (*[]table.SkillPost, error) {
+	rs := make([]table.SkillPost, 0)
+	err2 := DB.Table("skill_posts").Where("publisher_id", uid).
+		Preload("Resources").
+		Preload("Labels").
+		Find(&rs).Error
+	if err2 != nil {
+		return nil, err
+	} else {
+		return &rs, nil
+	}
+}
+func (d CommonDao) FindRecommend() interface{} {
+	skill := &table.SkillPost{}
+	DB.Table("skill_posts").
+		Order("id DESC").
+		Preload("Resources").
+		Preload("Labels").
+		First(skill)
+	var res1 *response.SimpleCommonPost
+	var ls []response.SimpleLabel
+	if skill.ID != 0 {
+		if skill.Labels != nil {
+			ls = make([]response.SimpleLabel, len(*skill.Labels))
+			for i, l := range *skill.Labels {
+				ls[i] = response.SimpleLabel{
+					LabelID: l.ID,
+					Content: l.Content,
+				}
+			}
+		}
+		rspath := "/static/images/default.png"
+		if skill.Resources != nil {
+			for _, resource := range *skill.Resources {
+				if strings.HasSuffix(resource.DiskFilePath, ".jpg") ||
+					strings.HasSuffix(resource.DiskFilePath, ".png") {
+					rspath = "/api/resource/" + resource.ID
+				}
+			}
+		}
+		res1 = &response.SimpleCommonPost{
+			ID:      skill.ID,
+			Title:   skill.Title,
+			Content: skill.Content,
+			Column:  skill.Column,
+			Labels:  &ls,
+			Cover:   rspath,
+		}
+	}
+
+	local := &table.LocalPost{}
+	DB.Table("local_posts").
+		Order("id DESC").
+		Preload("Resources").
+		Preload("Labels").
+		First(local)
+	var res2 *response.SimpleCommonPost
+	var ls1 []response.SimpleLabel
+	if local.ID != 0 {
+		if local.Labels != nil {
+			ls1 = make([]response.SimpleLabel, len(*local.Labels))
+			for i, l := range *local.Labels {
+				ls[i] = response.SimpleLabel{
+					LabelID: l.ID,
+					Content: l.Content,
+				}
+			}
+		}
+		rspath := "/static/images/default.png"
+		if local.Resources != nil {
+			for _, resource := range *local.Resources {
+				if strings.HasSuffix(resource.DiskFilePath, ".jpg") ||
+					strings.HasSuffix(resource.DiskFilePath, ".png") {
+					rspath = "/api/resource/" + resource.ID
+				}
+			}
+		}
+		res2 = &response.SimpleCommonPost{
+			ID:      local.ID,
+			Title:   local.Title,
+			Content: local.Content,
+			Column:  local.Column,
+			Labels:  &ls1,
+			Cover:   rspath,
+		}
+	}
+	reslist := make([]response.SimpleCommonPost, 0)
+	if res1 != nil {
+		reslist = append(reslist, *res1)
+	}
+	if res2 != nil {
+		reslist = append(reslist, *res2)
+	}
+	return reslist
 }

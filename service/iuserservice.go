@@ -14,4 +14,7 @@ type IUserServiece interface {
 	UpdateUser(userid uint, req *request.UserCreateReq) error
 	AddHomeLike(like uint, liked uint) string
 	DeleteHomeLike(like uint, liked uint) string
+	GetOtherUserById(userid uint, otherid uint) interface{}
+	GetUserExpr(id uint) (*[]response.SimpleExprPost, error)
+	GetDetail(id uint) interface{}
 }

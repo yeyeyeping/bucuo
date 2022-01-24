@@ -6,6 +6,7 @@ type UserReq struct {
 }
 
 type UserCreateReq struct {
+	Username       string `json:"username" validate:"required,min=3,max=20"`
 	Sno            string `json:"sno" validate:"required,max=10" label:"学号"`
 	Grade          string `json:"grade" validate:"required,max=6" label:"年级"`
 	College        string `json:"college" validate:"required" label:"学院"`
@@ -33,6 +34,19 @@ type ByPageCommon struct {
 	Column   string `json:"column" label:"分类"`
 	Type     string `json:"type" validate:"required,oneof='skill_posts' 'local_posts'" label:"分类"`
 }
+type ByPageComment struct {
+	PageSize uint   `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
+	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
+	Type     string `json:"type" validate:"required,oneof='skill_posts' 'local_posts' 'expr_posts'" label:"分类"`
+	OwnerID  uint   `json:"ownerid" validate:"required,min=1"`
+}
+
+type ByPageReply struct {
+	PageSize  uint `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
+	PageNum   uint `json:"pagenum" validate:"required,min=1" label:"页序号"`
+	CommentID uint `json:"ownerid" validate:"required,min=1"`
+}
+
 type IGetOwnerInfo interface {
 	GetOwnerType() string
 	GetOwnerId() uint
@@ -73,12 +87,6 @@ type CommentReq struct {
 	PostID  uint   `json:"ownerID" validate:"min=1"`
 }
 
-type ByPageComment struct {
-	PageSize uint   `json:"pagesize" validate:"required,min=1,max=10" label:"页大小"`
-	PageNum  uint   `json:"pagenum" validate:"required,min=1" label:"页序号"`
-	Type     string `json:"type" validate:"required,oneof='skill_posts' 'local_posts' 'expr_posts'" label:"分类"`
-	PostID   uint   `json:"id" validate:"min=1"`
-}
 type AddReplyReq struct {
 	CommentID uint   `json:"commentID" validate:"required,min=1"`
 	Content   string `json:"content" validate:"required,min=10",max=150`

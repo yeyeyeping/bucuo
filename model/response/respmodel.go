@@ -70,8 +70,8 @@ type SimpleExprDetailResp struct {
 	Labels         *[]SimpleLabel `json:"labels"`
 	CollectorNum   int            `json:"collectorNum"`
 	CommentNum     int            `json:"commentNum"`
+	Like           bool           `json:"like"`
 }
-
 type SimpleCommonPost struct {
 	ID      uint           `json:"id"`
 	Title   string         `json:"title"`
@@ -89,4 +89,23 @@ type SimpleCommonPostDetailResp struct {
 	Labels         *[]SimpleLabel `json:"labels"`
 	CommentNum     int            `json:"commentNum"`
 	Resources      *[]string      `json:"resources"`
+}
+
+type SimpleUser struct {
+	Username       string
+	UserId         uint
+	ProfilePicture string
+}
+type SimpleReply struct {
+	ID          uint       `json:"id"`
+	Content     string     `json:"content"`
+	Replier     SimpleUser `json:"replier"`
+	LikeUserNum uint       `json:"likeusernum"`
+}
+type SimpleComment struct {
+	ID          uint       `json:"id"`
+	Content     string     `json:"content"`
+	User        SimpleUser `json:"user"`
+	LikeUserNum uint       `json:"likeusernum"`
+	ReplyNum    uint       `json:"replynum"`
 }

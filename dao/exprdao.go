@@ -19,8 +19,9 @@ func (ExprDao) FindAll(column string, pagesize uint, pagenum uint) (postlist *[]
 	if column == "" {
 		err = DB.
 			Table("expr_posts").
-			Limit(int(pagesize)).
+			Order("id").
 			Offset(int((pagenum-1)*pagesize)).
+			Limit(int(pagesize)).
 			Preload("Labels").
 			Preload("Comments", func(db *gorm.DB) *gorm.DB {
 				return db.Select("ID")
@@ -33,8 +34,9 @@ func (ExprDao) FindAll(column string, pagesize uint, pagenum uint) (postlist *[]
 		err = DB.
 			Table("expr_posts").
 			Where("`column`=?", column).
-			Limit(int(pagesize)).
+			Order("id").
 			Offset(int((pagenum-1)*pagesize)).
+			Limit(int(pagesize)).
 			Preload("Labels").
 			Preload("Collectors", func(db *gorm.DB) *gorm.DB {
 				return db.Select("ID")
@@ -66,4 +68,28 @@ func (ExprDao) ExistOne(exprid uint, uid uint) error {
 }
 func (ExprDao) UpdateOne(req *request.UpdateExprReq) error {
 	return DB.Table("expr_posts").Updates(req).Error
+}
+func (ExprDao) GetUserExpr(uid uint) (*[]table.ExprPost, error) {
+	res := make([]table.ExprPost, 0)
+	err := DB.Table("expr_posts").
+		Preload("Labels").
+		Preload("Collectors", func(db *gorm.DB) *gorm.DB {
+			return db.Select("ID")
+		}).
+		Where("publisher_id=?", uid).
+		Find(&res).Error
+	return &res, err
+}
+func (ExprDao) GetExprNum(uid uint) uint {
+	i := 0
+	DB.Raw("select count(*) from expr_posts where publisher_id=?", uid).Scan(&i)
+	return uint(i)
+}
+func (ExprDao) GetCollectors(uid uint) uint {
+	i := 0
+	DB.Raw(
+		"select count(*) from expr_post_collect_collected where expr_post_id in "+
+			"(select id from expr_posts where publisher_id=?)", uid).
+		Scan(&i)
+	return uint(i)
 }

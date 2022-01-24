@@ -230,3 +230,10 @@ func (c CommonService) Update(req *request.CommonPostUpdateReq, uid uint) string
 	}
 	return ""
 }
+func (c CommonService) FindUserSkillPost(uid uint) (*[]response.SimpleCommonPost, string) {
+	ps, err := commondao.FindUser(uid)
+	if err != nil {
+		return nil, err.Error()
+	}
+	return c.BuildSimpleSkillPosts(ps), ""
+}

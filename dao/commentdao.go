@@ -8,6 +8,13 @@ import (
 type CommentDao struct {
 }
 
+type ExistErr struct {
+}
+
+func (e ExistErr) Error() string {
+	return "记录已存在"
+}
+
 func (d CommentDao) AddComment(comment *table.Comment) error {
 	return DB.Table("comments").Create(comment).Error
 }
@@ -42,14 +49,6 @@ func (c CommentDao) PostExist(t string, id uint) bool {
 	DB.Raw("select count(*) from "+t+" where id =?", id).Scan(&i)
 	return i == 1
 }
-
-type ExistErr struct {
-}
-
-func (e ExistErr) Error() string {
-	return "记录已存在"
-}
-
 func (d CommentDao) Like(id uint, commentid uint) error {
 	if !d.CommentExist(commentid) {
 		return gorm.ErrRecordNotFound
@@ -101,4 +100,43 @@ func (d CommentDao) LikeReplyExist(uid uint, replyid uint) bool {
 	i := 0
 	DB.Raw("select count(*) from reply_like where reply_id=? and user_id=?", replyid, uid).Scan(&i)
 	return i == 1
+}
+func (d CommentDao) GetComment(ownertype string, ownerid uint, pagesize uint, pagenum uint) (error, *[]table.Comment) {
+	cs := make([]table.Comment, 0)
+	err2 := DB.
+		Table("comments").
+		Where("owner_type=? and owner_id=?", ownertype, ownerid).
+		Order("id").
+		Offset(int(pagesize * (pagenum - 1))).
+		Limit(int(pagenum)).
+		Preload("User").
+		Find(&cs).Error
+	return err2, &cs
+}
+func (d CommentDao) GetLikeCommentNum(id uint) int64 {
+	return DB.
+		Model(&table.Comment{
+			Model: table.Model{ID: id},
+		}).
+		Association("LikeUsers").Count()
+}
+func (d CommentDao) GetReplyNum(id uint) int64 {
+	var i int64
+	DB.Model("replies").Where("comment_id=?", id).Count(&i)
+	return i
+}
+func (d CommentDao) GetReply(commentid uint, pagesize uint, pagenum uint) (error, *[]table.Reply) {
+	cs := make([]table.Reply, 0)
+	err2 := DB.
+		Table("replies").
+		Where("comment_id=?", commentid).
+		Order("id").
+		Offset(int(pagesize * (pagenum - 1))).
+		Limit(int(pagenum)).
+		Preload("Replier").
+		Find(&cs).Error
+	return err2, &cs
+}
+func (d CommentDao) GetLikeReplyNum(id uint) int64 {
+	return DB.Model(&table.Reply{Model: table.Model{ID: id}}).Association("LikeUsers").Count()
 }

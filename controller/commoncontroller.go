@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bucuo/constant/errormsg"
+	"bucuo/dao"
 	"bucuo/model/request"
 	"bucuo/service"
 	"bucuo/util/setting"
@@ -139,7 +140,9 @@ func (controller CommonController) Update(ctx *gin.Context) {
 	}
 	controller.Success(ctx, nil)
 }
-
+func (controller CommonController) Recommend(ctx *gin.Context) {
+	controller.Success(ctx, dao.CommonDao{}.FindRecommend())
+}
 func ValidateColumn(column string, tablename string, isnull bool) bool {
 	if isnull && column == "" {
 		return true
