@@ -12,6 +12,8 @@ func AuthCommentInit(group *gin.RouterGroup) {
 	group.DELETE("comment/:id", commentcontroller.DeleteComment)
 	group.POST("reply", commentcontroller.AddReply)
 	group.DELETE("reply/:id", commentcontroller.DeleteReply)
+	group.POST("comment/like/:id", commentcontroller.Like)
+	group.POST("reply/like/:id", commentcontroller.LikeReply)
 }
 func CommentInit(group *gin.RouterGroup) {
 

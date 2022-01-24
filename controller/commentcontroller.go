@@ -38,7 +38,7 @@ func (controller CommentController) DeleteComment(ctx *gin.Context) {
 	uid := uint(parseUid(ctx))
 	es := commentservice.DeleteCommemnt(uint(id), uid)
 	if es != "" {
-		controller.InternalServerError(ctx, "", nil)
+		controller.InternalServerError(ctx, es, nil)
 		ctx.Abort()
 		return
 	}
@@ -68,12 +68,45 @@ func (controller CommentController) DeleteReply(ctx *gin.Context) {
 	uid := uint(parseUid(ctx))
 	es := commentservice.DeleteReply(uint(id), uid)
 	if es != "" {
-		controller.InternalServerError(ctx, "", nil)
+		controller.InternalServerError(ctx, es, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, nil)
+}
+func (controller CommentController) Like(ctx *gin.Context) {
+	sid := ctx.Param("id")
+	uint64id, err := strconv.ParseUint(sid, 10, 64)
+	if err != nil {
+		controller.CustomerError(ctx, errormsg.ValidateError, err.Error(), nil)
+		ctx.Abort()
+		return
+	}
+	id := uint(uint64id)
+	uid := parseUid(ctx)
+	if es := commentservice.Like(uint(uid), id); es != "" {
+		controller.CustomerError(ctx, errormsg.UnknowError, es, nil)
+		ctx.Abort()
+		return
+	}
+	controller.Success(ctx, nil)
+}
+func (controller CommentController) LikeReply(ctx *gin.Context) {
+	sid := ctx.Param("id")
+	uint64id, err := strconv.ParseUint(sid, 10, 64)
+	if err != nil {
+		controller.CustomerError(ctx, errormsg.ValidateError, err.Error(), nil)
+		ctx.Abort()
+		return
+	}
+	id := uint(uint64id)
+	uid := parseUid(ctx)
+	if es := commentservice.LikeReply(uint(uid), id); es != "" {
+		controller.CustomerError(ctx, errormsg.InternalServerError, es, nil)
 		ctx.Abort()
 		return
 	}
 	controller.Success(ctx, nil)
 }
 func (controller CommentController) GetByPage(ctx *gin.Context) {
-
 }

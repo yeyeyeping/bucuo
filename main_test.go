@@ -326,7 +326,7 @@ func TestExpr(t *testing.T) {
 	fmt.Printf("%#v", p[0].Labels)
 }
 func TestJSon(t *testing.T) {
-	r := request.CommentReq{}
+	r := request.AddReplyReq{}
 	bs, _ := json.Marshal(r)
 	fmt.Println(string(bs))
 }
