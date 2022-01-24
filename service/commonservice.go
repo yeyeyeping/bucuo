@@ -134,11 +134,16 @@ func (c CommonService) BuildSimpleLocaLPostDetail(post *table.LocalPost) *respon
 
 }
 func (c CommonService) PushPost(req *request.CommonPostReq) string {
-	err, id := commondao.CreatePost(req.Type, req.Title, req.Content, req.Column, req.PublishId, &req.Labels)
-	if err != nil {
-		return err.Error()
-	}
 	if req.Resources != nil {
+		for _, resource := range req.Resources {
+			if !resourcedao.ResourceExist(resource, req.PublishId) {
+				return "资源不存在"
+			}
+		}
+		err, id := commondao.CreatePost(req.Type, req.Title, req.Content, req.Column, req.PublishId, &req.Labels)
+		if err != nil {
+			return err.Error()
+		}
 		err = commondao.AddResource(req.Type, id, &req.Resources)
 		if err != nil {
 			return err.Error()

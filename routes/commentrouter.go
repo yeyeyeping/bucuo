@@ -9,9 +9,9 @@ var commentcontroller = controller.CommentController{}
 
 func AuthCommentInit(group *gin.RouterGroup) {
 	group.POST("comment", commentcontroller.AddComment)
-	group.DELETE("comment", commentcontroller.DeleteComment)
+	group.DELETE("comment/:id", commentcontroller.DeleteComment)
 	group.POST("reply", commentcontroller.AddReply)
-	group.DELETE("reply", commentcontroller.DeleteReply)
+	group.DELETE("reply/:id", commentcontroller.DeleteReply)
 }
 func CommentInit(group *gin.RouterGroup) {
 

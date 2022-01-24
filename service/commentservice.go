@@ -12,6 +12,9 @@ type CommentService struct {
 }
 
 func (c CommentService) AddComment(req *request.CommentReq, uid uint) string {
+	if !commentdao.PostExist(req.Type, req.PostID) {
+		return "recoder not found"
+	}
 	comment := table.Comment{
 		Content:   req.Content,
 		UserID:    uid,

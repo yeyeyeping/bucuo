@@ -40,3 +40,8 @@ func (r ResourceDao) GetResouce(uuid string) (string, error) {
 func (r ResourceDao) CreateOne(resource *table.Resource) error {
 	return DB.Create(resource).Error
 }
+func (r ResourceDao) ResourceExist(id string, uid uint) bool {
+	i := 0
+	DB.Raw("select count(*) from resources where id=? and uploader_id=?", id, uid).Scan(&i)
+	return i == 1
+}

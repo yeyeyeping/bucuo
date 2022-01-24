@@ -37,3 +37,8 @@ func (d CommentDao) DeleteReply(id uint, uid uint) error {
 		}
 	})
 }
+func (c CommentDao) PostExist(t string, id uint) bool {
+	i := 0
+	DB.Raw("select count(*) from "+t+" where id =?", id).Scan(&i)
+	return i == 1
+}

@@ -326,7 +326,7 @@ func TestExpr(t *testing.T) {
 	fmt.Printf("%#v", p[0].Labels)
 }
 func TestJSon(t *testing.T) {
-	r := request.CommonPostUpdateReq{}
+	r := request.CommentReq{}
 	bs, _ := json.Marshal(r)
 	fmt.Println(string(bs))
 }
@@ -384,4 +384,10 @@ func TestAddReply(t *testing.T) {
 		ReplierID: 1,
 	})
 	fmt.Printf("%#v\n", err)
+}
+func TestCount(t *testing.T) {
+	i := 0
+	dao.DB.Raw("select count(*) from resources where id=? and uploader_id=?", "", 1).Scan(&i)
+	fmt.Println(i)
+
 }
