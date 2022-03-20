@@ -1,2 +1,2 @@
 # bucuo
-bucuo api(use go)
+bucuo api(use gorm,gin)
